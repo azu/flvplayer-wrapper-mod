@@ -1,0 +1,20 @@
+nicoplayer.swfがサーバにない場合
+
+①htmlフォルダの中にnico_wrapperというフォルダを作る。
+②以下のswfを右クリックから保存し①のnico_wrapperフォルダに入れる。
+http://www.nicovideo.jp/swf/nicoplayer.swf
+http://www.nicovideo.jp/swf/marqueeplayer.swf
+http://www.nicovideo.jp/swf/flv_bgmplayer.swf
+http://www.nicovideo.jp/swf/swf_bgmplayer.swf
+http://www.nicovideo.jp/swf/hirobaplayer.swf
+http://www.nicovideo.jp/swf/hirobamovie.swf 
+
+ミラー
+http://www.mediafire.com/?jljmjkmzm1d
+③ローカルファイルを参照するようにリダイレクト
+[HTTP headers]
+In = FALSE
+Out = TRUE
+Key = "Redirect wrapper"
+Match = "http://www.nicovideo.jp/swf/([^./]+.swf*)\1"
+Replace = "$RDIR(http://local.ptron/nico_wrapper/\1)" 

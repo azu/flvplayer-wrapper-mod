@@ -1,0 +1,60 @@
+
+*WrapperでコメントがNaNになったり音声だけになる(表示されない等)
+URL: Nico nicoplayer Redirect (OUT)
+URL: Nico Local nicoplayer Loader (both) 
+URL: Nico nicoplayer Replace (OUT) 
+などnicoplayerにリダイレクトするフィルタが原因みたいなので切っといて下さい。
+
+同様にnicocache_nlのlocalNicoPlayerExtensionも入れてlocalNicoPlayer=true場合も
+nicoplayerにリダイレクトしてるのでlocalNicoPlayer=falseにする。
+
+*カスペルスキー2009をデフォで使ってると、
+アンチバナーでwrapper使えなくなるよ
+ホワイトリストにニコニコを追加すると回避できる
+*.nicovideo.jp/*  で設定
+
+
+*@CMやニコスクリプトが動作せず「マクロ名がありません」となる
+@とかがNGwordに登録されているなら
+Nico: OwnerComment bypass (080201) test01
+を入れると解決するはず
+もしくは@をNGから外す。
+ 
+
+*何か動作がおかしくて原因が分からないとき
+とりあえず今のオミトロンの設定ファイルのバックアップを取っとく。
+んで、設定済みオミトロンの設定ファイルでも取ってきて、それで動かしてみる。
+それで動くようなら設定ファイルのどっかが腐ってるからこの機会にフィルタの整理整頓をオススメする。
+それで駄目ならccleanerとかでFlash関連のデータを消してみる。 
+
+*NMM動画やCM見れない
+原因は、mp4やswfに対応させた
+"Content-Disposition: smilevideo change filename (in)"フィルタだったっぽい。
+これを切ってやればCMもNMM動画も普通に再生される。
+問題のフィルタ
+[HTTP headers]
+In = TRUE
+Out = FALSE
+Key = "Content-Disposition: smilevideo change filename (in)"
+URL = "*.nicovideo.jp"
+Match = "$URL(http://[^/]+/smile\?(v$SET(1=sm)|m$SET(1=sm)|s$SET(1=nm))=([0-9]+)\2.[0-9]+)inline; filename="smile(.flv|.mp4|.swf|)\3""
+Replace = "attachment; filename="\1\2\3""
+
+↓ こうすれば大丈夫？
+[HTTP headers]
+In = TRUE
+Out = FALSE
+Key = "Content-Disposition: smilevideo change filename (in)"
+URL = "*.nicovideo.jp"
+Match = "$URL(http://[^/]+/smile\?(v$SET(1=sm)|m$SET(1=sm)|s$SET(1=nm))=([0-9]+)\2.[0-9]+)inline; filename="smile(.flv|.mp4|)\3""
+Replace = "attachment; filename="\1\2\3""
+
+--------------------------------------------------------
+掲示板で報告するときには環境も一緒に報告すると良いかも。
+システムタブに
+wrapper: mod 2008-10-24 00:00 swf8
+Flash  : WIN 9,0,124,0
+スレッド(動画):sm*******
+というのがあるのでそれをコピペして、使用ブラウザや詳しい症状も書くと
+解決が早くなるかもしれません。
+---------------------------------------------------------

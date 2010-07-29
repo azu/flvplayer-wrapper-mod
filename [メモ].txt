@@ -1,0 +1,216 @@
+[メモ]
+
+広場
+入りと戻りは別
+hirobaIn  = hirobaButton() + hirobaMode:true
+hirobaOut = hirobaBackButton() + hirobaMode:false
+
+状態の変化は
+hirobaMode
+
+広場
+hirobaIsReadyとかで判定できるけど、これが出来る前に値を確かめると
+壊れるので、startedVideoを使う。
+
+最大化してるときに最大化するとこうなる。
+http://drop.io/wrapper/asset/tete004
+1227970800
+1228023817
+///////
+過去ログ
+nico.tabmenu.wayback_menu.wayback_date.selectableRange.rangeStart //投稿日
+nico.tabmenu.wayback_menu.wayback_date.selectableRange.rangeEnd //今日、カレンダー上の選択できる範囲
+
+nico.ThreadCreateDate.getHours();   //投稿時間
+nico.ThreadCreateDate.getMinutes() //投稿分
+
+//過去ログの値を投稿日時に上書き？
+nico.tabmenu.wayback_menu.wayback_hour.value = nico.ThreadCreateDate.getHours();
+nico.tabmenu.wayback_menu.wayback_min.value  = nico.ThreadCreateDate.getMinutes();
+nico.tabmenu.wayback_menu.wayback_date.selectedDate = nico.tabmenu.wayback_menu.wayback_date.selectableRange.rangeStart;
+-------------
+@cmについて
+nico.now_cm
+	//@cmが流れる瞬間に値が来る。
+nico.now_cm.pause
+投稿者コメントで大文字で書いたりしても通ってしまう。
+mes.indexOf('@CM')*mes.indexOf('＠CM')*mes.indexOf('@ＣＭ')*mes.indexOf('＠ＣＭ');
+
+nico.hasAtCM
+	//@CM動画と@bgmを判定出来る
+	//引用動画を読み込んだ時点でtrueが返る。
+nico.hasAtBGM
+	//同じ@bgm版
+	
+@cmの流れ
+まず最初に終了イベントが先に来ることに注意。
+stopCM
+playCM
+stopCM
+↓次のCM
+stopCM
+playCM
+stopCM
+
+-------------
+nico.Connection.onCMsgGetThreadResult
+辺りが初回の起動時の値を決めるのに使いやすい。
+
+Objectの参照。
+	for(var i in eventObject){
+	  trace(i);
+	}
+------
+if (nico.o.ng_up != undefined){
+  	trace("投稿者フィルタがあるよ");
+}
+------
+nico.playerPauseとnico.player.pauseの違い
+☆nico.playerPauseはnico.player.pauseを含む
+    function playerPause(flag, isAtPause) {
+      if (!player) {
+        return undefined;
+      }
+      if (player.isPlay() && flag || !player.isPlay() && !flag) {
+        player.pause(isAtPause);
+      } else {
+        pauseBGM(flag);
+      }
+    }
+
+------
+SharedObject オブジェクト
+ng_ids.push({user_id: addID, date: addDate, message: addMessage});
+で配列形式で値を保存できる。
+ng_ids[i].user_id
+で参照する。
+flush()で書き込み
+
+*****************
+kakikomiの対応表
+
+NGID
+kakikomi
+この規則
+ngid_view
+kakikomi_view
+
+updateNGIDMenu
+updatekakikomiMenu
+
+scrollNGIDMenu
+scrollKakikomiMenu
+
+
+ng_id
+kaki_komi
+
+user_id
+kaki_id
+
+//本体
+ng_ids
+kaki_txt
+
+****************
+
+------
+
+ コメント数(delも含む)=コメント数に表示されてる数
+nico.comma_separated(nico.last_resno + int(offset))
+ コメント数(delを含まない)=NGのとこにひゅうじされてるコメント数
+nico.LogList.length
+fwMessages.length  同じ？
+
+
+--------
+シーク。
+function relativeSeek(mode){
+
+-----
+ //プレイヤー上のマウス座標(xm:0～544,ym:0～384)
+ //xm:0～Stage.width  ym:0～Stage.height とも書ける。
+ var xm = nico.videowindow._xmouse;
+ var ym = nico.videowindow._ymouse;
+ if (0 < xm && xm < 272 && 48 < ym && ym < 192) {
+ //左下
+ }
+ if (0 < xm && xm < 272 && 193 < ym && ym < 384) {
+ //左上
+ }
+ if (273 < xm && xm < 544 && 48 < ym && ym < 192) {
+ //右上
+ }
+ if (273 < xm && xm < 544 && 193 < ym && ym < 384) {
+ //右下
+ }
+
+//メニューバー内にマウスがあるか判定
+var xm = main_bar._xmouse;
+if(xm > main_bar.main_info._x && xm < main_bar.main_info._x + main_bar.main_info._width){
+var ym = main_bar._ymouse;
+if(ym > main_bar.main_info._y && ym < main_bar.main_info._y + main_bar.main_info._height){
+-----
+
+controllerのパーツ名まとめ
+
+controller_thumbってなんだろ？
+//コントローラー全体
+controller.controll_bar
+//下のコマンド欄の全体
+controller.controller_submenu
+//一時停止
+controller.atPauseButton
+
+//最大化・最小化
+controller.controller_submenu.NormalScreenButton
+controller.controller_submenu.LargeScreenButton
+//リプレイ
+controller.controller_submenu.ReplayOn
+controller.controller_submenu.ReplayOff
+//コメント非表示・表示
+controller.controller_submenu.OverlayOn
+controller.controller_submenu.OverlayOff
+
+//セット。シークバー
+controller.seek_bar
+controller.loaded
+//音量
+controller.controller_submenu.sound_bar
+controller.controller_submenu.Mute_btn
+
+//????
+controller.seekMessage
+------
+
+OpenPlayerAndConnect関数の範囲を
+<!--// chcek old end of OpenPlayerAndConnectまでだったのを
+// end of nico.OpenPlayerAndConnect　-->までに変更
+いまいちどういう意図でやってたかが分からない。
+★動作がおかしくなったら戻してみる
+→入力欄の最大化からの復帰に影響がある。戻した。
+
+-----
+wakuを非表示。
+後ろに隠れてる
+nico.waku._visible = false;
+
+---------
+動画のタイトルを取得するとき
+getTitle: function(){
+ var title = "";
+ switch(pg){
+ case "watch" :
+ 	if(w.Video)title = w.Video.title;
+ 	break; 
+ 	
+ 32  ：名無しさん＠お腹いっぱい。  ：sage  ：2008/10/15(水) 08:37:32 ID:IgH8h5ca0
+"titleタグをいじる"ときのtitleの取得方法の修正。
+
+従来のh1タグからの取得だと、<wbr>タグが組み込まれていた場合にそこで切れてしまう。
+var titleJSCom = "decodeURI(Video.title)";
+
+どうしてもh1タグから取得としたい人はこっち。
+var titleJSCom = "document.getElementsByTagName('h1')[0].getElementsByTagName('a')[0].innerHTML.replace(/<wbr>/g,'')";
+
+filterでニコニコ動画(.*)の部分を消しているなら、titleタグからそのまま取得した方がいい。

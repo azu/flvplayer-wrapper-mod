@@ -1,0 +1,1311 @@
+★flvplayer_wrapper custom 2008-06-29 01:00版
+
+○nicoplayer0620の仕様に暫定対応。UIの緑枠が残ったりします。
+	・関数更新に対応
+	・ニコスコメント関係いろいろ（fwMessages_Nicos, 強調表示、非表示チェックボックスなど）対応
+	・icon_game -> icon_buttonokへ変更のついでに画像を整理、AmebaVision・フォト蔵の画像関係をコメントアウト
+
+	問題点
+	・コメント一覧セレクトリストを変更するとfocusManagerの緑枠が残る。
+	　focusManagerの緑枠が出てしまう原因は不明だがmingの仕様かもしれない。（枠が残るのはFlashの仕様？）
+	・今のところニコスコメント、ローカルコメントはNGIDなどにかかっても表示される（投稿者コメント同様）
+	　そんなに困らないからいいか・・・対応めんどくｓ（ｒｙ
+
+○NGIDの保持件数、保持期限を設定できるようにした。
+	・0にすると無制限、無期限。
+
+○ホイールクリックの一時停止に「動画クリックで一時停止」が必要になっていたのを修正。
+
+○コメント編集時、非表示になっているコメントが判別できなかった問題を修正。
+	・ついでにコメント追加時に再ソートするようにした。
+
+○投稿者コメント欄にはIDを表示しないようにした。
+
+○swf動画の読み込み中に再生できなくなっていた問題を修正。
+	・swfのメタデータを読み込んだ後はnico.player.playStartを実行しないようにした。
+	　あまりチェックしてないので妙な動作をするかもしれない。
+
+・ngmessage_flagをfalseに戻していなかったのを修正。
+
+・自動リンクを"za","zc"に対応。
+
+・他細かい修正。
+
+
+★flvplayer_wrapper custom 2008-04-18 06:00版
+
+○nicoplayer0416の仕様に対応。
+	・chatノードにraw_userが追加されたが、今のところundefinedしか入っていない？単に184でないフラグなのか、NGユーザー用に生IDが入るのか。
+	・header.Comments.htmlTextはとりあえず保留。
+
+○自動リンクでページ情報の読み込みに失敗していたのを修正。
+	・htmlの変更に対応。
+
+○flash外のホイールクリックに誤反応する場合があった問題を修正。
+	・マウス位置の判定はonRollOver及びonRollOutで行うようにした。
+
+○比率変更のメニュー条件を少し修正。
+	・nico.player.videoStream_width＆heightがundefinedのときはnico.video_base_video._width＆heightを代入するようにした。
+
+○コメント透明度指定でコメントマスク領域が白く表示される問題を修正。
+　それに伴い、各コメントの透明度が一律（投稿日時に関わらず）指定された透明度になります。
+	・nico.Overlayではなく、MessageSlotsの各コメントmcの透明度を変更するようにした。
+
+○ログリストの行間を元に戻した。
+	・最新コメント欄の見栄えが悪いので。
+
+○投稿者コメントのIDも表示するようにした。
+	・fwMessages_ownerthreadで管理するようにした。
+
+○「ブラウザ：動画上にID表示」を実装。
+	・nico.updateMessages内でslot._mc.textをいじる。
+
+○右クリックメニューを少し増やした。
+	・「動画上：ID表示/非表示 切替」「ログリスト：ID表示/非表示 切替」「本文中のリンクを開く」「プロフィールを開く」
+
+○キーボード操作がオンの場合、メインバーもしくは動画表示部のクリック時にIMEをオフにするようにした。
+
+○flash読み込み時、NGIDされたコメントがログリストからも消えるようにした。
+	・新着コメントは受信時ではなくupdateFilter("check")実行時にAddChatLogするようにした。
+	・ログリストのコメント保持数指定も正常になったはず。
+	・公式のNGフィルターと共存のためにNGMessage時にフラグを立てるようにした。
+
+○同梱のflv_boosterを3/18のものに更新した。
+	・統合はそのうち試してみます。
+
+・自動リンクを"nm","zb","zd","cw","fx","na","ig"に対応。
+
+・nicoplayerにopen_src = trueを渡すようにした。
+
+・（稀に発生するシーク失敗対策として）強引に前方シークはmp4のみ、強引に後方シークはflvのみに限定してみた。
+
+
+★flvplayer_wrapper custom 2008-03-17 17:00版
+
+○「コメント詰まり対策」使用時にコメント保持数が無制限になってしまう問題を修正。
+	・connectBoardの後にresMaxを設定するようにした。
+
+○コメントの再読み込み時、コメントデータが空になっていなかった問題を修正。
+	・nico.ClearMessagesでnico.Messagesがクリアされるので、fwMessages、cand_ng_id、フィルター関係のフラグとカウンタを初期化するようにした。
+
+○「背景を黒くする」で背景が薄い灰色になっていた問題を修正。
+	・置換ミスでalphaを30にしてしまっていた。
+
+○TubePlayer併用時の以下の問題を修正。
+　・ニコスクリプトが正常に働かない
+　・リピートが効かない
+　・オススメタブに移動しない
+　・ログリストのコメントをクリックでコピーできない
+　・ログリストのコメントから抽出やNGIDができない
+　・ログリストのソート列が保存されない
+　・ログリストからシークできない
+　・Enterでコメントを送信できない
+	・TubePlayerでは、EventListenerに登録してある関数（dispatchEventから実行される）をいじるとなぜか実行されなくなる。
+	・そのため、いじりたいオブジェクトのdispatchEventを書き換えて例外処理をさせる方法に変更。
+
+○ログリストで選択したコメントに含まれるリンクを自動リンクするようにした。
+
+
+★flvplayer_wrapper custom 2008-03-17 03:00版
+
+○自動リンクの情報がうまく取得できなかった問題を修正。
+	・動画説明文のPタグが変わっていたので対応。
+
+○swf7で「リンクを別窓で開く」がオススメタブの動画タイトルのリンクに適用されていなかった問題を修正。
+	・nico.getRelation_xml.onLoadを修正。
+
+○swf7でログリスト類のコンテキストメニュー「IDをコピー」「本文をコピー」の有効判定がおかしかった問題を修正。
+
+○「再生に合わせてスクロール」使用時、過去ログのログリストが更新されない問題に多分対処。
+	・nico.updateTab内でnico.tabmenu.wayback_menu.LogList_Wb.updateControl()を実行。
+	・nico.Connection.onCMsgChat内でnico.tabmenu.wayback_menu.LogList_Wb.dataProvider.updateViews()を実行。
+
+○左クリックでも時計を切り替えられるようにした。
+	・clockを分離、テキストはclockTextに。
+
+○ログリスト類の行間を少し詰めてみた。
+	ログリスト.layoutY、ログリスト.__set__rowHeight()で行間を変更。
+
+○ニコスクリプトなどの投稿者コメントを表示するようにした。
+
+○フィルタータブを有効にした。
+
+■swf8関連
+mingを0.3.0.beta1→0.4.0.beta（ http://kromann.info/ の PHP 5.2 Release_TS より）に変更してswf8でコンパイルしたテスト版。
+
+○いくつかのパッケージが使えるようになったものの、flash.net.URLRequestなど、使えないパッケージ（undefined）もあるようだ。
+	・自由度が上がったのは良いが、そもそもFlashの知識が無さすぎて何ができるのかわからない。
+	・とりあえずflash.external.ExternalInterface、flash.net.FileReferenceが有用かもしれない。
+
+○nicoplayerの画像類がシャープになった。画像破綻が解決。
+
+○swf7の問題だった「○タブメニューのフォントのスペーシングがなにやらおかしい」が解決。
+
+○dojavascriptではflash.external.ExternalInterface.callを使うようにした。
+	・getURLのような文字数制限が（多分）無く、動作速度もgetURLより速いらしい。IEのナビゲート音が鳴らないので環境に優しい。
+	・実行文字列はevalのためにgetURLに比べて一段多くエスケープ（'\'→'\\'）する。
+
+■swf8固有の問題
+
+○pngが正常に表示されないのでjpgを使用。（0.4.0.betaのライブラリの問題かもしれない）
+	→png2dblで変換したdblを使うと画像が赤い四角（デコード失敗？）に。ming-0.3.0.beta1でも同様。環境依存かも。
+	→jpgは問題ないのでとりあえずjpgにする。
+
+
+★flvplayer_wrapper custom 2008-03-15 17:00版
+
+○自動リンクの情報がうまく取得できなかった問題を修正。
+	・動画説明文のPタグが変わっていたので対応。
+
+
+★flvplayer_wrapper custom 2008-03-15 17:00版
+
+○ミュートが無効になる問題を修正。
+	・onPlayProcを修正。
+
+○FlashPlayerのバージョンが古くmp4動画を再生できない場合に、FlashPlayerの更新を促すメッセージが表示されなかった問題を修正。
+
+・フォーカスを外す→releaseFocus
+	・nico.videowindowにフォーカスできなくなっていたのでbgに変更。
+
+・ついバージョン更新を忘れてしまうので手動更新しなくていいようにした。
+
+■swf7関連
+swf7で特に問題無さそうなのでswf7をルートフォルダに入れるようにした。
+
+○右クリックメニューを少し増やした。
+	・videowindow：一時停止・再生、スムージングON・OFF、比率変更4:3、16:9
+	・LogList系：IDをコピー、本文をコピー
+	・とりあえず思いついた分だけ。
+
+
+★flvplayer_wrapper custom 2008-03-14版
+
+○0313のnicoplayerの更新に対応。
+	・ShowMessageの引数変更、その他上書き関数を更新。
+	・ニコスクリプトボタンのクリックのためにnico.videowindow.onPressをbg.onPressに変更。bg._visibleをいじらず、サイズと位置調整で隠すように変更。
+	・投稿者コメント編集時はnico.coordinatesLayer.onPress = bg.onPressを実行。
+
+○flv_boosterが使えなかった問題を修正。
+　使うためには同梱テキストのフィルター３を導入する必要があります。Nicocache_nlから使用する場合は導入しなくても多分動きます。
+	・nicoplayerのallowDomain指定が変更されたため、wrapper同様$RDIRするようにした。
+
+○強調表示からの復帰時、ログリストのソートが不正確だった問題を修正。
+	・ソート方向とNumericを考慮するように。
+
+○swfに自動再生許可が適用されなかった問題を修正。
+	・nico.player.playStartでswfを止めるようにした。停止状態で読み込む方法はあるんだろうか？
+	・一瞬再生してしまう場合があるので最初にnico.player.global_sound.setVolume(0)しておき、再生時に戻すようにした。
+	・ついでに再生前処理を関数にしてnico.player.play及びnico._player._play_btn.onRelease内で実行するようにした。
+
+○自動リンクのマイリストでタイトル解析に失敗していた問題を修正。
+	・マイリストの書式変更に対応。
+
+○自動リンクのマイリストの下部には説明文を表示するようにした。また下部をクリックでマイリストを開くようにした。
+
+○標準でスムージングされるようになったので「動画再生：常にスムージング」を廃止、「動画再生：スムージングしない」を実装。
+　swfはスムージングされません。
+
+○時計の簡易情報表示でmp4及びswfの情報を少し増やした。
+	・swfの解像度は再生中随時変化する。
+	・mp4はファイルサイズから総データレートを出しているが、動画音声それぞれの値がわからないとあまり意味が無い気がする。オーバーヘッド分の多少の誤差もある。
+	・swfの_totalBytesは実際のファイルサイズ+10％～20％程度の値になるようなので正確なファイルサイズが計算できない。
+	・簡易情報の構造を変更。
+
+○nicoplayerを完全に読み込むまでplayerを非表示にした。
+	・タイムラインでのレイアウト変更を廃止、replaceFunction内で実行するようにした。
+
+・コメント詰まり対策の精度を少し上げた。
+	・動画を20バイトorフレーム（適当）読み込んだ後、10fr程度onMetaDataを待つようにした。
+
+・OpenPlayerAndConnectには改変前のmovie_typeを渡すようにした。
+
+・checkHTMLをチェックフラグで動くように構造を変更。チェックフラグをwait→waitingに統一。
+
+・「動画再生：リピートの終点を指定」で設定ウィンドウを閉じないように変更。
+
+・強引にシーク使用時、ごく稀にシークに失敗することがある？確認中。
+
+■swf7に関して
+＄useswfversion=7でコンパイルしたテスト版。特に問題が無ければこれで作っていきます。
+移行による不具合はぱっと見てわかる限り修正したものの、見落としがあるかも。
+	・$useswfversionでバージョンを指定できるようにした。
+
+○たまにコンボボックス及び過去ログの日付ボタンが効かない場合がある問題が解決したかもしれない。
+
+○オススメ動画のリンク部分に下線がつくので、全体ではなく画像のみにリンクを追加するようにした。
+	・画像にリンクを追加するとなぜか投稿日時の前にゴミがつく。html的には問題ないはずなんだが。
+
+・loadMovieがなぜか効かないのでMovieClipLoaderを使って読み込むようにした。
+	・swfversion6ではMovieClipLoaderは使えないので切り替え式で。
+
+・なぜかremoveMovieClipが効かない。応急処置として非表示にした。
+
+・大文字小文字のゆらぎをいくつか修正。swfversion7では厳密に判定されるようだ。
+
+・タブのフォントのスペーシングがなにやらおかしいのでフォントを_sansに設定、letterSpacingを0に。
+
+
+★flvplayer_wrapper custom 2008-03-06版
+
+○「コメント詰まり対策」を使用しているとコメント等の情報が読み込まれない場合があった問題を修正。
+	・一部動画（swfやニコニュース）でonMetaDataが実行されないので、動画のgetBytesLoadedを監視する方法に変更。
+
+○mp4動画を開いた時「動画再生エラー」が表示される問題を修正。（応急処置）
+	・ming使用のためかnicoplayerの方法ではFlashPlayerのバージョンが読めないのが原因。
+	・nicoplayer読み込み時にチェックされるので、movie_typeを'mp4'→' mp4'として渡すことでダイアログを抑制。
+	・FlashPlayerのバージョンチェックはwrapper側で行う。
+	・movietype='mp4'で判定する処理が増えたら困る。どうしよう。
+
+○「強引に後方シーク」を前方シークに対応して「強引にシーク」に変更。変更に伴い、一度チェックが外れます。
+	・mp4の動画では要求時間の後方にシークされるようだ。
+	・checkBackward→checkSeekに変更、前方シークもチェックするようにした。
+	・ついでに前方シーク・後方シークを関数にまとめた。
+
+○ローカルサーバからmp4、swfを読み込めるようにした。
+
+・swf動画にもflv_boosterが効くようにした。
+	・video_baseを使うように変更。
+
+・mp4動画のメタデータにはビットレート情報が無い。算出できるようなパラメータも無さそう。
+
+
+★flvplayer_wrapper custom 2008-03-04版
+
+○自動リンクでマイリストが読み込まれなかった問題を修正。
+
+○"http://～"の自動リンクを[B]ボタンで開いた場合URLがおかしかった問題を修正。
+
+○nicoplayerのNGボタンを非表示にした。
+
+○nm～の動画を見られるようにした。時報を切っていなければ、ゲーム（？）も動作するかも。
+	・nicoplayerにパラメータを渡した。dlcw、wv_id、wv_title、wv_code、wv_time、iee、deleted
+
+・URL文字判定を修正。
+
+
+★flvplayer_wrapper custom 2008-03-03版
+
+○0303のnicoplayerの更新に対応。
+	・nico.o.onload、nico.listenerObject.stateChange、movie_type、eco
+
+○コメント中の"http://..."を自動リンクするようにした。（動画説明文はリンクされません）
+	・長いURLは文字数制限で入らないのであまり意味がない気もする。
+
+○TubePlayerで読み込み中画像が消えない問題に対処。
+　（この問題以外にもTubePlayerとの併用ではリピートや再生後オススメタブへ移動などいくつかの機能が動作しません。）
+	・今のところnico.listenerObject.stateChangeの上書き、nico.filteringMessage、が機能しないことを確認。（nico.filteringMessageは上書きすれば動作する）
+	・原因は不明。
+
+○フィルター３をテキストから削除。
+
+○最大化時のvideowindowのx座標を中央に変更。
+
+○ログリストにフォーカスが移らないようにした。
+
+・強調表示解除時にメインバーのインフォを消す部分を消してしまっていたのを戻した。
+
+・ヘッダ部のフォントの設定方法を変更。
+	・replaceFunction内でnico.headerからフォントを取得して一度だけ設定するように変更。
+	・時計のフォントをsetNewTextFormatで設定するように変更。
+
+・簡易動画情報に動画形式を表示するようにした。
+
+
+★flvplayer_wrapper custom 2008-02-13B版
+
+○ニコスクリプトが正常に実行されなかった問題を修正。
+	・nico.listenerObject.stateChangeのミスを修正。
+
+
+★flvplayer_wrapper custom 2008-02-13版
+
+○flvplayerのパス変更に対応。それに伴いフィルター１をMatchのファイル名のみ変更。
+	・/flvplayer.swf → /swf/nicoplayer.swfへ変更。
+
+○強調表示・解除時のログリスト動作を少し改善。
+	・nico.writeLogListを実行してplayScrollの実行やdeletedの背景色の設定をするようにした。
+	・nico.LogListListener.headerReleaseやisPlayScrollからloglist_sorted_columnにソートカラムを保存しておき、ログリストに復帰させるようにした。
+
+○透明化の表示時間=0のとき入力部が消えない場合があった問題を修正。
+	・nico.stageListener.onResize内のnico.inputArea._y変更部分を条件付けした。
+
+○ブラウザ：「再生後オススメタブに移動しない」を実装。
+	・「再生に合わせてスクロール」ONの場合に面倒なので。
+
+○コメント：「コメント詰まり対策 (動画の後にコメントを読み込む)」を実装。
+	・nico.oに読み込まれるlenと動画のメタデータのdurationが大分異なることがあるようだ。原因は不明。
+	・メタデータを読み込んでからnico.connectBoardすることで解決してみた。
+
+・バージョン表記をなんとなく変更。
+
+・マイリストを探すついでに動画ページ内の動画リンクを自動リンクするコードを書いてみたが、邪魔に思えるので見送り。
+
+
+★flvplayer_wrapper custom 2008/01/29版
+
+○「ログリストを自動スクロール」を廃止。
+　コメント受信中は自動スクロール、ログリストをスクロールするとコメント受信解除。（flvplayerの挙動）
+	・nico.writeLogListを上書きしないように変更。
+
+○読み込み時にログリストが最新の位置にスクロールされなかったのを修正。
+	・nico.writeLogListがflvplayer更新に対応していなかったため発生。上の変更に伴い修正。
+
+○「JavaScriptを使う」をONに固定、設定画面から撤去。
+
+○1/29のflvplayer更新に多分対応。
+	・nico.o.onload及びnico.Connection.onCMsgChatをflvplayer更新に対応。
+	　それに伴い、nico.playerへの処理をnico.OpenPlayerAndConnectを上書きして行うようにした。
+
+・前回ロールオーバーウィンドウの待ち時間を200msにしていた。記述漏れ。
+
+
+★flvplayer_wrapper custom 2008/01/19版
+
+○透明化使用時、最大化時に入力部が消えない場合があった問題を修正。
+	・リサイズ時に毎回setHideUITimerするように戻した。
+
+○透明化不使用時、最大化時にヘッダ部が動画に被る問題を修正。
+	・ヘッダデザイン変更に合わせてnico.VIDEOWINDOW_LARGE_DEFAULT_Yを調節。
+
+○キーボード操作使用時にEnterでコメント投稿に失敗すると全画面化してしまう問題を修正。
+	・nico.UpdateChatInputの後にnico.ChatInput = nico.inputArea.ChatInput1;してフォーカスを外さないようにした。
+
+○ヘッダを少し小さくした。
+	・合わせてnico.tabmenuの_yと_heightを調節。
+
+○システム欄にwrapperのバージョンを表示するようにした。
+
+○時計をホイールクリックで簡単な動画情報に切り替えるようにした。
+
+・shiftMessagesを0117の仕様に対応。
+
+
+★flvplayer_wrapper custom 2007/12/28版
+
+○ヘッダ、強調表示関連の表示を修正。
+	・マイリスト数はカンマで区切りを入れてみた。
+	・広告の枠線を消すためだけにこのheaderを使ったのは間違いだったかもしれない。
+
+○システムタブのコメント非表示チェックの不具合を修正。
+	・オーバーレイOn・Offを1227の仕様に対応。
+
+○公式NG設定機能の設定数増加に対応。
+	・o.onloadを1227の仕様に対応。
+
+○コマンドバーの↑の動作の不具合を修正。
+	・ueの消去が変だったのを修正。
+
+○透明化使用時、二秒間操作がなければマウスカーソルを消すようにした。
+
+○透明化使用時に邪魔にならないようにヘッダ部のアイコンやテキストのクリック判定を消した。
+	・デメリットは各アイコンの説明表示やテキストのコピーができなくなること。
+
+○シークバー上のホイールでシーク、音量バー上のホイールで音量調節するようにした。
+
+・wheel_volume_value設定上のホイール操作を修正。
+
+・top_line.pngを廃止、bottom_line.pngで下の枠線を描くようにした。
+
+・OpenPlayerを1225の仕様に対応。
+
+・Connection.onCMsgChatを1227の仕様に対応。
+
+
+★flvplayer_wrapper custom 2007/12/24版
+
+○上の枠線が消えていた問題を修正。
+	・top_line.pngを表示するようにした。
+	・まずmain_bar.png変更時に気づくべきだし、その後の動作確認もStage.height=540の環境のみで不十分だった。
+
+○「ログリストを縮める」不使用時、ログリストを下の枠線に重ならないようにした。
+	・白2px黒1pxのムービークリップbottom_lineを置いた。
+
+・「ログリストを縮める」使用時のログリストの高さを入力欄に合わせて少し高くした。
+
+
+★flvplayer_wrapper custom 2007/12/23C版
+
+○IEで「動画をホイールチェックで一時停止」がうまく動作しなかった問題（12/23B版から）を修正。
+	・確かに動作チェックしたはずだが、あれは夢だったのかもしれない。
+
+
+★flvplayer_wrapper custom 2007/12/23B版
+
+○「動画クリックで一時停止」がうまく動作しなかった問題（12/23版から）を修正。
+	・再生・一時停止時にフォーカスがnicoに移るためonPressが複数回認識されてしまっていた。
+
+○Firefox及びOperaでも動画をホイールクリックで一時停止できるように変更。
+ただしホイールチェックの方式を変えたため、処理落ちしたりホイールクリックの入力が短かったりすると入力を取りこぼす可能性があります。
+その場合は少し長めに押すようにしてください。
+	・ホイールクリックでonPressが実行されるのはIEのみのようなので、毎フレームホイールクリックをチェックするようにした。
+	ただし毎フレームチェックしているだけなので処理落ちするなどしてチェック間隔を逃すと取りこぼす。
+
+
+★flvplayer_wrapper custom 2007/12/23版
+
+○"watch/○○"の自動リンクでフリーズする場合があったバグを修正。
+	・マイメモリーのリンクしか想定していなかったために発生した単純なデバッグミスだった。link.length=0で発生していた無限ループを修正。
+
+○テキストボックスにフォーカス時、再生ボタンが反応しない場合があった問題を修正。
+	・再生ボタンにフォーカスが移らないとまずいようだ。
+
+
+★flvplayer_wrapper custom 2007/12/22版
+
+○iroiro併用時の、弾幕グラフ、情報欄、プレミアムボタン等に関する不具合を多分修正。
+	・nico.header.Membersも更新するようにした。
+
+○動画をホイールクリックで一時停止するようにした。（デフォルト機能）
+
+○「操作：動画クリックで一時停止」を実装。こちらは強調表示解除中にコメント以外の部分をクリックした場合のみ動作します。
+	・どういう実装にするか迷った。だからとりあえず二方式実装した。
+	・個人的には「一時停止したと思ったら強調表示解除していた」というのは絶対嫌なんだが、注意深い（普通？）の人から見たら何を言っているのか（ｒｙだろうか。
+
+○「コメント：コメントの透明度を指定」を実装。
+	・nico.Overlay._alphaをいじった。古いコメントは元々半透明になっているので見にくくなるかも。
+
+・全画面化→最大化に単語を変更。ブラウザの全画面化・最大化の意味に合わせて。
+
+
+★flvplayer_wrapper custom 2007/12/20版
+
+○投稿者フィルターが効かない場合があった問題を修正。
+	・ID表示していない場合messageがオリジナルになっていた。
+
+○自動リンクをマイリストの新URLに対応。
+	・JS_getMyListsでは"mylist/[0-9]+"でマッチするようにした。
+
+○自動リンクをコメントの"watch/[0-9]+"、"mylist/[0-9]+(/[0-9]+)"、"ax"、"yo"に対応。
+	・マイリストの追加に関してはaddLink内で対応。
+
+○自動リンクのマイリストは自動で情報を読み込むようにした。
+	・動画情報を自動で読み込まないのは「短時間のアクセスは云々」のためだと思われるが、マイリストは自動で読み込んでもいい気がする。
+
+○透明化の表示時間=0の挙動を変更。(常時表示 → マウスカーソルをUI上に置いた場合のみ表示)
+	・表示時間=-1とかにすると常時表示。
+
+○「リンクを別窓で開く」使用時は、ニコスクリプトのジャンプ及びお勧め動画のリンクを別窓で開くようにした。
+	・ついでにnico.relationDPのhtmlを書き換えてお勧め動画のリンクの範囲を広くした。
+
+○「太いシークバー」を復活した。
+
+○「コメントIDをコピー」「コメント本文をコピー」はログリストのコメントをクリックした場合もコピーするようにした。
+
+○オススメタブ表示時に再生ボタンを押した場合、最新コメントタブを表示するようにした。
+
+○動画の末尾で再生ボタンを押した場合、動画の先頭に戻るようにした。
+
+・wrapper側でheaderを表示して広告の枠線を完全に隠した。
+
+・シーク時、再生中ならsetCheckPlayingIntervalを実行するようにした。
+
+・video_info.lastkeyframetimestampがある場合もnico.player._contentLength - 5をチェックするようにした。
+
+・nico.videowindow.loadingImageが再生するまで消えなくなったのでsetAutoPlayInfoしたら消すようにした。
+
+・「強引に後方シーク」はnico.player.isSeekingをチェックするようにして安定性を向上した。ついでにパフォーマンスも向上した。
+
+・「ログリストにID表示」「常にスムージング」「低画質のみスムージング」はすぐに反映するようにした。
+
+・rewindした時にonMetaDataが動いてしまうので初回のみスムージングをチェックするようにした。
+
+
+★flvplayer_wrapper custom 2007/12/05版
+
+○広告の枠線を隠した。ただし透明化したヘッダを表示している状態では表示されます。
+	・ヘッダ透明化時のみヘッダの深度を上にするようにした。
+	・ヘッダの画像なので完全に消すのは無理っぽい。ヘッダの情報を全部wrapper側で表示させれば可能だろうけどめんどくさい。
+
+・nico.inputArea.instanceの数字が毎度変わるので、nico.UpdateChatInputをいじってコマンド▲ボタンを表示するようにした。
+
+・全画面化ボタンをクリックしたときにはボタンの状態が変わるためかnico.controller.controller_submenu.NormalScreenButton._visibleが正常に取得できないのでsetHideUITimerはリサイズ時に行うようにした。
+
+
+★flvplayer_wrapper custom 2007/12/04版
+
+○設定メニューとNGIDメニューの初期位置を変更。
+
+○「開始時にシステムタブを表示」使用時、最新コメントタブを開くまでコメントが自動更新されなかった問題を修正。
+	・nico.thread_type == 0(デフォルト)の場合、nico.THREAD_LOGで上書きするようにした。
+
+○TubePlayerと併用すると投稿者フィルターが効かなかった問題を修正。
+	nico.filteringMessageをwrapper側から上書きしたら効いた。原因不明。
+
+○再生時間の表示がおかしかったのを修正。
+	・controller_submenu._heightの変更が必要なくなったのでやめた。
+	・サイズがうにょうにょ変わる原因自体はわからない。
+
+
+★flvplayer_wrapper custom 2007/11/28版
+
+○UI透明化時、マウスカーソルがUI上にある間はUIを非表示にしないように変更してみた。
+	・UI表示とタイマーを切り離した。
+	・onEnterFrameではなくsetIntervalで非表示を行うように変更。マウスの監視はonMouseMoveで。
+
+○強調表示以外では"[投稿者]"を表示しないように変更。
+	・投稿者コメント編集時に邪魔になる。
+
+○コメント編集時は「開始時にシステムタブを表示」を無効にした。
+
+○投稿者コメント編集時は強調表示を無効にした。
+
+○非公開のニコスクリプトを含む投稿者コメントがうまく強調表示できなかった問題を修正。
+	・cand_ng_idのnoにMes._noではなくiを入れるように変更。
+
+○単一コメント内の二個目以降の動画アドレスに対して自動リンクがうまく動かなかった問題を修正。
+	・動作を変更した際にループを外したにもかかわらずbreakを残してしまっていたため。
+
+○「ヘッダ部を消去」や「ヘッダ部を透明化」を使用していない場合、ヘッダ部が動画に少し被っていたのを修正。
+	・「ヘッダ部を透明化」のためにヘッダ部を手前に持ってきたため発生。
+
+
+★flvplayer_wrapper custom 2007/11/27版
+
+○コマンドバーの白ボタンは"white"を入力するようにした。
+	・ニコスクリプトでデフォルト書式が指定可能になったために実装されたのだろう。
+
+○TubePlayerと併用するとコメントが表示されなかった問題を修正。
+	・nico.CreateMessageを上書きするとなぜか表示されなくなるのでnico.Connection.onCMsgChat内から_messageを上書きするように変更した。
+
+○「全画面時：背景を黒くする」を実装。
+	・深度-10000に黒いムービークリップを置いた。flashリサイズ時にリサイズ。強引にも程が・・・
+	・仕様的には、フィルタで背景色を変更してHTML側から黒くする方が良いんじゃないかな？多分。
+
+○ついでに、フィルター１を背景色が指定できるように変更してみた。
+
+○「コメント：開始時にシステムタブを表示」を実装。
+	・nico.mainTabをnico.tabmenu.system_tabに変更。
+
+○「コメント：ニコスクリプトを無効にする」を実装。
+	・nico.Connection.onCMsgChat内のnico.addScriptLoadを無効にする。
+
+・投稿者がNGIDに追加できてしまう（実害は無いが）問題を修正。
+
+
+★flvplayer_wrapper custom 2007/11/26版
+
+○とりあえずわかる範囲でニコスクリプトに対応。
+	・nico.Connection.onCMsgChatを仕様変更に対応。
+
+	・nico.filteringMessageの実行位置がnico.CreateMessage内に移動したのでそれを上書きした。(投稿者フィルター透過のために)
+
+	・fwMessagesに_scriptError（nico.AddChatLogの引数に使用。赤くなるらしい。）を追加。
+	（投稿者専用の）スクリプト用ステータスなので今は必要無いはず。
+	いい加減fwMessages_ownerthreadを作るべきか？
+
+○全画面時の透明化使用時、ヘッダ部付近・入力部付近以外でマウスを動かしても非表示を解除しないようにしてみた。
+
+○コマンドバーの色の並びを変更した。（なんとなく）
+	・虹風？に。
+
+
+★flvplayer_wrapper custom 2007/11/19B版
+
+○入力部自動非表示時に全画面化を解除するとコントローラーが消えてしまう問題を修正。
+	・timeLine.check_mouseの終了処理の位置をtimeLine.check_mouse内に移した。
+
+○ホイールを使ったときも自動非表示を解除するようにした。
+
+・全画面時は「NGIDに追加」ボタンも透明化＆自動非表示するようにした。
+
+・透明度の初期値を60にした。
+
+
+★flvplayer_wrapper custom 2007/11/19版
+
+○動画上部に広告の判定があった問題を修正。
+	・透明化のためにnico.headerをnico.videowindowの上に持ってきた影響でnico.header.marquee_linkが表層に出てきていた。
+	・nico.marquee同様どかしておいた。
+
+
+★flvplayer_wrapper custom 2007/11/18B版
+
+・command_bar.pngを入れ替え忘れていたので更新。
+
+
+★flvplayer_wrapper custom 2007/11/18版
+
+○「全画面時：ヘッダ部を透明化」を実装した。また、全画面時の設定を少し整頓した。テキスト部分が透明にならないのは仕様です。
+	・「全画面時入力部を透明化」のヘッダ版。両透明化設定は同時にtimed_hide（自動非表示設定）も設定する。
+	・テキストを透明にするには埋め込みフォントを使う必要がある。
+
+○「全画面時入力部を透明化」使用時、入力部の位置がおかしくなることがあった問題を修正。
+	・非表示を_yを負にすることで非表示、元の位置を再計算することで表示するようにした。
+
+○コメント編集時の「選択中のユーザーをチェック」ボタン（11/15新機能）を非表示にした。
+
+・nico.inputArea.instance17.onReleaseをいじって、マイメモリーなどのコメントができない状態でもコマンドバーの表示・非表示をできるようにした。
+
+・「低画質のみスムージング」使用時、HD（16:9）の動画で高画質でもスムージングがオンになってしまう問題を修正。
+	・スムージングをオンにするビデオサイズの条件をwidth < 512 && height < 384にした。
+
+・DLボタンクリック時、file_nameのチェックがおかしかったのを修正。
+
+・テキストの「既知の問題」と「変更履歴」の位置を入れ替えた。
+
+
+★flvplayer_wrapper custom 2007/11/15版
+
+○「全画面時入力部を透明化」を実装した。二秒間操作しないと入力部が完全に非表示になります。
+	・timeLine.check_mouse.onEnterFrameでマウスの移動を監視、操作していない時間hands_off_timeと入力部非表示フラグhide_input_area_flagで判定。
+	・完全に非表示とかいってるけど_y += 200してるだけ。
+
+○フィルター１のwrapperのサイズを540にした場合、コマンドバーを下部に配置するようにした。
+　それに伴いフィルター１のテキストの補足を更新。
+	・全画面から戻ったとき用にcommand_bar_default_yもつくった。
+
+○コマンドバーにゼロ幅文字（零幅）ボタンを追加。
+	・決定的な問題点が無いので実装。
+
+○コマンドバーの"blue"と"ue"の認識が被っていた問題を修正。
+	・"ue "は単純に置き換えず、先頭にあるか、直前に半角スペースがあれば消すように変更。
+
+○とりあえずコマンドバーにアスペクト比変更（4:3、16:9）、スムージング（滑）のボタンを置いた。
+	・滑の_alphaを変更するためにshowCommandBarとかchangeSmoothingとか作った。
+
+○動画タイトルのコピー時、NTFSのファイル名に使用できない文字を変換するようにした。
+
+・searched_flagを立ててsearchMessageで同じメッセージを走査しないようにした。
+
+・「低画質のみスムージング」もしくは手動によりスムージングを切り替えたときはメッセージを表示するようにした。
+
+・全画面時にはnico.controller._heightを使わず数値（52.75）を使うようにした。また、nico.controller._yも再計算するようにした。
+（再生ボタンにカーソルを合わせた（青く反転）状態ではnico.controller._heightが596.25pxになる。）
+
+
+★flvplayer_wrapper custom 2007/11/14版
+
+○自動リンクが自動表示されたときもタグとマイリストを検索するようにした。
+	・ついでにJS_getVideoTagsとJS_getMyListsが被らないようにした。
+
+○「低画質のみスムージング」によってスムージングされた場合、もしくはキーボードからスムージングを切り替えた場合、スムージングのON/OFFを表示するようにした。
+
+○iroiro風のコマンドバーを実装した。
+　キーボード操作に「C:コマンドバー表示・非表示」を追加。元あった「コメント表示・非表示」は「H（Hide comments）」に移動。
+	・_rootの深度24000～にcommand_barを追加。goTopDepthの項目にcommand_barを追加。
+	・操作の変更はこれっきりにしよう。
+
+・createSquareBtnの引数の並び順を width,height,depth,x,y から depth,x,y,width,height に変更した。
+
+・NGIDのImport時に削除ボタン等が消えていなかったのを修正。
+
+・「強引に後方シーク」使用時の0秒以前へのシーク処理を見直した。
+
+
+★flvplayer_wrapper custom 2007/11/12B版
+
+○キーボード操作でキーコードが表示されたり「DL」「設定」「NGID」「LINK」を使うといろいろおかしかったりしたのを修正。
+	・テストコードが残ってた上に動作チェックをまともにやっていなかった。反省。
+
+
+★flvplayer_wrapper custom 2007/11/12版
+
+○NGID一覧表示中にコメントを受信すると、一覧が更新されないために指定したNGIDが削除できない場合があった問題を修正。
+	・updateFilter("check")内でNGIDが更新されたらupdateNGIDMenu("ng_ids");を実行するように変更。
+
+○NGIDを指定して削除してもログリストに表示されなかった問題を修正。
+	・updateFilter("delete_id")内でngid_filter_flagを更新していなかった。また、ngid_filter_countの更新位置もおかしかったので修正。
+
+○「動画再生：常にスムージング」を追加。
+
+○キーボード操作に S：スムージング を追加。「DL」「設定」「NGID」「LINK」も頭文字で押せるように。
+
+○設定の操作タブにキーボード操作一覧（適当）を貼った。
+
+○動画にキーフレーム情報がある場合はキーフレーム情報を元にシークするように変更。
+	・nico.o.onLoad内のnico.OpenPlayer（nico.player及びnico.player.stream_ns.onMetaDataの宣言、nico.player.stream_ns.playの実行）の直後に
+	nico.player.stream_ns.onMetaDataを上書きしてビデオのメタデータを取得、キーフレーム情報を元にシークするようにした。
+
+・自動スムージング処理をnico.player.stream_ns.onMetaDataの中に移した。関数の上書き前にonMetaDataが発生してしまうと効かなくなるが、自分で試した限り大丈夫そう。
+
+・timeLine.fit_layout内にあったnico.playerへの処理をnico.o.onLoad内のnico.OpenPlayerの直後に移した。
+
+・キーボード操作の処理でnico.player.playを使わないようにした。（nico.player.pauseを使うべきだった）
+
+・音量調節量をホイールで調節できるようにした。
+
+
+★flvplayer_wrapper custom 2007/11/10B版
+
+○指定したNGIDを削除できるようにした。
+	・delete_id（clear_idの一つ版）を作った。updateFilter("delete_id")もclear_idを流用した。
+
+○強調表示モード中にログリストのアイテムを選択してもID抽出を行わないように変更。
+
+○「強引に後方シークする」使用時、後方シーク中に連続して後方シークするとシークし直したり一時停止状態になる問題を修正。
+	・後方シーク時に timeLine.check_backward.onRelease == undefined をチェックして上書きしないようにした。
+
+○「強引に後方シークする」が少しうるさいので、後退シーク量の半分以上後退したらシークをやめるようにした。
+	・後方シークの繰り返し条件を seek_time > now - mouse_backward / 2 にした。
+
+
+★flvplayer_wrapper custom 2007/11/10版
+
+○「コメントを抽出」ボタン表示中に動画上のコメントをクリックしたとき「コメントを抽出」ボタンが消えない問題を修正。
+	・updateLogList("cand_ng_id")内で非表示にするのを忘れていた。
+
+○キーボード操作に Enter：全画面化・解除、BackSpace：動画の先頭に戻る、C：コメントの表示・非表示、M：ミュート、R：リピート を追加。
+
+○コントローラにフォーカスが当たっていてもキーボード操作ができるようにした。
+	・動画関係のキーボード操作を"nico.controller."以下にフォーカスがある場合も効くようにした。
+
+○全角入力時はキーを判別できないので判定を削除。
+	・恥ずかしいことに全角スペースと勘違いしていた。
+
+○「操作：強引に後方シークする」を実装。キーフレーム間隔が後退シーク量より大きい場合に後方シークできない問題を解決できるかもしれないオプション。
+　後方のキーフレームに飛ぶまでシーク量を倍々に増やしつつシークするが、シーク時間が10フレームを越える環境ではまともに動かないと思われる。
+	・タイムラインで現在時間をチェックし、現在時間 <= 目標時間（シーク開始時間 - 後退シーク量）になるまで後退シーク量を倍々に増やしつつ繰り返しシークする。
+	　チェック間隔は10フレーム、チェック回数は10回まで。
+
+・flv_boosterをデフォルトでは使わないようにした。
+
+
+★flvplayer_wrapper custom 2007/11/08版
+
+○Firefox及びOperaで「全画面時入力部を押し出す」を使っている場合、全画面からうまく元に戻らないことがあった問題に少し対処。
+　これにより「全画面時入力部を押し出す」使用かつiroiro未使用時は、全画面時にウィンドウをリサイズしてもflashはリサイズされなくなります。
+	・flvplayer_container及びdocument.bodyのリサイズをonResizeではなく全画面ボタン押下時にのみ実行するようにした。
+
+○「全画面時背景を黒くする」がIE以外に効かないので設定項目を削除。
+	・FirefoxとOperaではJavaScriptからbgcolor、quality、flashvarsなどが参照できない。src、name、typeなどは参照可能なのでセキュリティの問題かも？
+	SWFObjectの宣言時のパラメータは有効なので属性自体が無いわけではない。
+	原因として思いつくるのはブラウザごとのSWFObjectのwrite()の挙動の違い（IEは<object>、Firefoxは<embed>とか）、ブラウザ自体の仕様の違いくらい。
+	今のところ解決不能。
+
+○RC2から「リピートの終点を指定」画面及び自動リンクの表示位置がずれていたのを修正。
+	・前から上のほうに表示されていた気がしないでもない。
+
+○ログリストのコメントを選択時、「コメントを抽出」ボタンを表示するようにした。
+	・単にupdateLogList("cand_ng_id")を実行するだけのボタン。
+
+○「操作：キーボード操作」を実装した。スペース：一時停止・再生、左右：シーク、上下：音量調節。調節値はホイール操作の設定値を使う。
+　「キーボード操作」使用時はビデオウィンドウをクリックすることでフォーカスが移るようにした。
+	・設定key_operationを作り、onKeyDownを監視。
+	・「ホイールシーク」等をオフにしてもホイール操作の設定値を非表示にしないようにした。
+	・nico.videowindowクリック時に入力欄からフォーカスを外そうとしたが、なぜかsetFocus(null)が効かない。
+	とりあえずnico.videowindowをフォーカスするようにしたが、多少重いのでキーボード操作使用時のみ実行。
+	・FocusRect（黄色の四角）を表示しないようにした。
+
+・コメント編集時、投稿者コメントのチェックボックスの状態保存を回避したつもりでできていなかった問題を修正。obj.user != 0ではなくobj.user != "投稿者"に。
+
+
+★flvplayer_wrapper custom 2007/11/06版
+
+○コメント編集時、強調表示モードのボタン類が表示されなかった問題を修正。
+	・OpenInput内、コメント編集時に全画面化ボタンを消さないようにした。
+
+○コメント編集時、非表示チェックボックスの状態を保存するようにした。
+	・updateLogList内でloglist_deleted_backupにチェックボックスの状態を保存、nico.AddChatLogの後にチェックボックスを書き換えるようにした。
+
+○ページ読み込み時、ログリストのNGコメント非表示がうまくいかなかった問題が修正しきれていなかった問題を修正。
+	・updateFilter("check")内、new_mes_search時の消去順がコメ番号順ではないので、コメ番号をソートした後まとめてログリストから消去するようにした。
+
+○設定画面に「操作」タブを作り、項目を少し整理した。
+
+○「全画面時背景を黒くする」を実装した。
+	・change_bgcolorを作り、リサイズ時に全画面であればjavascriptで黒くするようにした。
+
+・nico.shiftMessagesの変数更新でcustom_filter_message_count及びngid_filter_message_countを負にならないようにした。
+
+・>イベントハンドラで重い処理をやるのはまずそうなので の件は勘違いだった模様。自動リンクの走査をメッセージ表示時に戻した。
+　しかし、タイムラインからのslot全走査とどちらが軽いのかよくわからない。頭がこんがらがった。
+
+・タイムラインではなくメッセージ受信時にNGID＆カスタムフィルタをチェックするコードを書いてみたが、new_mes_searchが使えないためかはっきり重いので没。
+
+
+★flvplayer_wrapper custom 2007/11/05版
+
+○ページ読み込み時、ログリストのNGコメント非表示がうまくいかなかった問題を修正。
+	・updateFilter("check")内、nico.LogList.removeItemAtの番号からfilter_countを引くように。新着メッセージのチェックなのでこれでいいはず。
+
+○コメント編集時の文章と完了ボタンがずれていたのを修正。
+	・OpenInput内、nico.DeleteLabel及びnico.DeleteButtonを表示する前に上にずらすようにした。
+
+・イベントハンドラで重い処理をやるのはまずそうなので、自動リンクの走査をタイムラインに戻した。
+　user_idのチェック（自動リンクからコメントへのジャンプ用）は少しでも軽くするために切ったまま。
+
+
+★flvplayer_wrapper custom 2007/11/04C版
+
+○flv_boosterのオン・オフ及びurlを設定可能にした。
+	・オフ→オン時にflv_boosterを読み込ませようとしたが、なぜか位置調整が効かないのでやめた。
+
+○ログリストのコメントクリック時に標準のボタンではなく「NGIDに追加」ボタンを表示するようにした。
+	・nico.LogListListener.changeを上書きした。それに伴い、emphIDからupdateLogListを切り離した。
+
+○NGコメントはログリストに表示しないようにした。
+	・updateLogList("normal")のAddChatLogをngid_filter_flagで取捨選択、
+	updateFilter("check")でメッセージを消す際nico.LogList.removeItemAt(no)も実行するようにした。
+
+○リサイズ時、入力部の位置がずれることがあった問題を修正。
+	・nico.controller._yをいじらないように修正。
+
+・ローカルFLV再生時、ファイル名が表示されていたのを修正。
+
+
+★flvplayer_wrapper custom 2007/11/04B版
+
+○全画面時に強調表示モードが表示される問題を修正。また、全画面時も左下（コメント入力欄の左方）に「NGIDに追加」ボタンを表示するようにした。
+	・有っても特に邪魔にならない場所に。
+
+○設定画面のタブがウィンドウの後ろに行かなかった問題を修正。
+	・pref_menu.baseの深度を0にした。
+
+○「低画質は自動でスムージング」の判定がうまくいかない場合があった問題をある程度対処。
+	・OpenInputの時点でnico.player.videoStream_widthまたはnico.player.videoStream_heightがundefinedの場合、タイムラインで30秒待つようにした。
+
+
+★flvplayer_wrapper custom 2007/11/04版
+
+○全画面時のリサイズを修正。iroiroのズレ修正機能が必要なくなったのでその部分を修正した（つもりの）iroiroを同梱。
+	・結局、ズレの原因となるnico._yをいじらずにnico.marqueeだけ上にどかすように変更した。
+	・main_bar._xの位置は最大化ボタン及びリサイズ(nico.stageListener.onResize)で合わせるように変更。
+
+○タブ切替時に強調表示のボタン類の表示を切り替えるように変更。
+	・updateTabを上書きしてnico.tabmenu.loglist_tab._currentframe == nico.TAB_SELECTをチェックするようにした。
+	・ついでに強調表示時にloglist_tabに切り替えるようにした。
+
+○flv_boosterを同梱＆読み込むようにした。
+	・flv_booster.swfを読み込むようにした。また、最大化ボタン及びリサイズ時に位置調整と表示非表示を切り替えるようにした。
+	・flv_booster.swfが無い場合も問題なく動くようだ。何か問題があったら教えてください。
+
+○設定画面を「ブラウザ」「動画再生」「コメント」にタブ分けした。以下の設定項目を追加。
+　「リンクを自動表示」「リンクを別窓で開く」
+　「最大化時ヘッダ部消去」「最大化時入力部を押し出す」
+　「スムージング（設定は保存されない）」「低画質は自動でスムージング」
+　「投稿者フィルターを透過」
+	・タブはcreateLinkTab及びupdateLinkTabから拝借。設定画面の下が余ったので以前の背景画像に入れ替え。
+	・入力部を押し出す機能はjavascriptを使う必要があった。
+
+・nico._lockrootの設定部分の書き方をほんの少し変えた。
+
+
+★flvplayer_wrapper custom 2007/11/01D版
+
+○iroiro併用時の全画面表示を修正。
+	mainbar._visibleをチェックし忘れていた。
+
+
+★flvplayer_wrapper custom 2007/11/01C版
+
+○全画面時の表示が狂っていたのを修正。
+	・各コントロールの補正を消してしまっていた。
+
+
+★flvplayer_wrapper custom 2007/11/01B版
+
+○自動リンクONで公式NG機能を利用した場合にスクリプトが停止してしまう問題を修正。
+	・公式NG機能にかかったコメントは_messageがundefinedになるため走査できなかった。
+	_message != undefinedをチェックするように修正。
+	・ついでにsearchTagsを廃止、searchLinkのメッセージ走査部分をsearchMessageとして分離した形にした。
+
+○ログリストのボタン類の表示を変更してみた。
+	・tab.png、normal_list、add_idをRC2のボタン類に合わせて変更してみた。
+
+
+★flvplayer_wrapper custom 2007/11/01版
+
+○コメントから自動リンクを取得する処理を変更。
+	・タイムライン上ではなくコメント表示時に取得するようにnico.updateMessagesを上書き、searchLinkを変更、video_tags用にsearchTagsを作成。
+	負荷を減らすのが目的だが、大量のコメントが表示されるときの瞬間負荷が高くなる可能性も。
+
+○動画DLの処理を元に戻した。
+	・ポップアップ回避のためのタイミング変更が原因だった。とりあえず元に戻した。
+
+○最大化時のレイアウトを少し改善。
+	・最大化トグルボタンのonReleaseを退避した上で上書きした。広告が消せないのでまだ見栄えが悪い。
+
+
+★flvplayer_wrapper custom 2007/10/27版
+
+○NG設定タブの仕様変更に対応。
+	・正確にはNG設定タブの初期化処理の位置が変わったのでnico.o.onload内の初期化処理を変更。
+
+○自動リンク、動画DLの処理を変更。
+	・自動リンクのblur以外はjsでのリンクを廃止してgetURLに統一。IE6+Sleipnir、Firefox、Operaの各ブラウザで試したところ問題ない様子。
+	・タイムラインからdownloadFLVするとポップアップブロックに引っかかるのでonRelease時に実行するようにタイミングを変更。
+
+○暫定的に自動リンクのホイールクリックを廃止。使ってた人がいたらちょっと考えます。
+	・FireFoxとOperaでは問題ないが、IEではlink_thumb.base.onReleaseも同時に実行されてリンクが二重に開かれてしまう。
+	思いついた対処法↓
+	A: link_thumb.base.onPressに変更してホイールが押されているかチェックすれば分割は可能だが、onPressはポップアップブロックに引っかかる。
+	B: link_thumb.base.onReleaseの挙動を別窓で開かず移動するように変更すると、なぜかページ遷移が起きないので一件落着だが、通常クリックの挙動が大きく変わるのはいかがなものか。
+	C: ホイールクリックを廃止。Sleipnir使ってるとblurは使わないしなぁ・・・。
+
+○LINKボタンの挙動を、設定ボタン等と同様に「LINKウィンドウを開く・閉じる」にした。
+	・なんとなく。
+
+・startJavaScript→checkHTML、waitTitle→checkTitle、それぞれstatus変数で状態チェックするように。
+
+・updateLogList(normal)でngid_filter_flag == trueならログリストに表示しないようにしてみたが、なぜか関係ない複数のコメントも消えた。とりあえず中止。
+
+
+★flvplayer_wrapper custom 2007/10/19C版
+
+○「ホイールで音量調節」の数値が保存されなかった問題を修正
+	・wheel_volume_so.data.numとwheel_volume_so.data.valueが混在していたtypo。valueで統一。
+
+・自動リンクの「B」ボタンを押したとき、use_javascriptがfalseならgetURLで開くように。
+
+
+★flvplayer_wrapper custom 2007/10/19B版
+
+○投稿者コメントの強調表示時、IDが正常に表示されていなかった問題を修正
+	・fwMessages[no].user_idではなくcand_ng_id[i].user_idを使うように修正。
+
+・試聴者コメント対応に伴い、投稿者コメントをuser = 0からuser = "投稿者"に変更したが、
+searchID、emphID、updateLogListを変更し忘れていた。一応、元のままでも特に問題はないはず。
+
+・試聴時はusが設定されないようなのでus == undefinedならnico.usに渡さないようにした（一応）が、試聴アイコンが点灯しない。謎。
+と思ったらオミトロンをバイパスしても試聴アイコンが点灯しない。やっぱり謎。
+
+
+★flvplayer_wrapper custom 2007/10/19版
+
+○試聴者コメントに対応したつもり
+	・user_id無し、かつ閲覧制限の無いコメントを試聴者コメントと判定。
+
+○フィルタータブが使えなかった問題を修正
+	・flvplayerにis_video_ownerを渡すようにした。
+
+○「最初にコメントを隠す」を「自動コメント非表示」と「ログリストを隠す」に分割
+	・「自動コメント非表示(hide_comment)」と「ログリストを隠す(hide_log)」に分割。
+
+○「DL時タイトルをコピー」を実装
+	・「DL時タイトルをコピー(copy_title)」設定項目を作成。
+
+○設定項目の配置を少し変更
+	・どうにかして整理したい。
+
+・wrapper内で定義している各種フォントをuser_fontで指定できるように。設定項目は作っていない。
+flvplayerのフォントはどうやって変えればいいんだろう？
+
+★flvplayer_wrapper custom 2007/10/18版
+
+○player: 2007-10-18 17:00の仕様に対応したつもり
+	・nico.Connection.onCMsgChat、nico.o.onLoadを更新。
+	nico.AddChatLogの引数にuserを取るようになったので各部を更新。
+
+・nico.OpenInputの処理で編集中に最大化ボタンを使用不能にする部分が抜けていたので修正
+
+○プレミアム動画でコメントがログに表示されなかった問題を修正したかもしれない
+	・v7で取捨選択をしていたのをuserの有無で判断するように変更
+
+○「Enterでコメント送信しない」「最初にログを隠す」「別窓でDLする」を実装
+	・設定ウィンドウが狭かったのでpref_menu.jpgを拡張した。
+	kill_enter、hide_log、download_blankキーを作って設定ウィンドウに配置。	
+
+○ホイールシークとホイールで音量調節の項目表示が被ることがあったのを少し修正
+（ウィンドウを複数開いてそれぞれ違う設定にしたりすると表示がおかしくなるので注意）
+	・両方OFFの状態でウィンドウA・ウィンドウBを開き、それぞれホイールシーク・音量調節をONにすると次回以降のウィンドウで両方ONになる。
+
+・shiftMessages内で毎回resMaxを設定するのをやめ、動画読み込み時のconnectBoardの直後と設定変更時に設定するように。
+
+・searchID、emphID、clearEmphMesで投稿者コメントが存在しない場合に余分な処理をしていたのを修正。
+
+・「nico.o.urlを保持しておけば一定時間経過後もダウンロード可能」は勘違いだったのでvideo_urlを削除。
+
+
+★flvplayer_wrapper custom 2007/10/17B版
+
+○「→リピートの終点を指定」ボタンが消えていた問題を修正。すみません。
+	・深度のチェック不足。二度目ですみません。
+
+
+★flvplayer_wrapper custom 2007/10/17版
+
+○投稿者コメントの表示に対応したつもり（NGIDやフィルターは不可）
+	・id==0(undefined)を投稿者とみなすように。
+	searchID、emphID、clearEmphMes、updateLogListをnico.Messages_ownerthreadに対応。
+	updateFilterではNGID追加時にaddID==0を無視するように。
+	nico.Connection.onCMsgChat内のfwMessages.pushはv7(投稿者コメントフラグ)がfalseのときだけ実行するように。
+
+○ホイールによる音量調節機能のON-OFFを設定できるようにした（ホイールシークとの選択）
+	・ボリューム調節を選択性に
+	wheel_volumeキー（フラグ、変化量）を作成、設定ボタン、変化量入力欄追加
+	wheel_volumeONで変化量入力欄表示、mouse_wheel.on.onRelease、mouse_wheel非表示
+	wheel_volumeOFFで変化量入力欄非表示、mouse_wheel表示
+	mouse_wheelONでwheel_volume.on.onRelease、wheel_volume非表示
+	mouse_wheelOFFでwheel_volume表示
+
+○動画タイトルコピー時に「（低画質モード）」などを付加するように変更、動画ダウンロード処理も少し変更
+	・nico.o.urlの最後に'low'が付いていたらvideo_titleに文字列を付加するように。
+	
+	・downloadFLVで二回目以降なぜかエラーが出るのでlocation.hrefを使わないようにした。
+
+・DLボタンの消失時間が短すぎたのでやっぱり元の600に戻した。
+
+・timeLine.start_js及びtimeLine.copy_titleの作成タイミングをwrapper読み込み時に戻した。
+
+・DLボタン押下～downloadFLVの処理を整理。
+それに伴いcopyTitleをwaitTitleにリネーム、timeLine.copy_titleをtimeLine.wait_titleにリネーム。
+
+・実装しようとした機能↓
+	○「○○sm2525.flv」のようなファイル名であってもローカル再生できるようにした
+	（ただし、インデックスファイルに書かれた各ファイルは、
+	 "(ダブルクォーテーション) \n(改行) /(スラッシュ)のどれかで区切られている必要がある）
+		・sm○○.flvが見つかった地点からさかのぼって",\n,/を検索。
+		最も近くで見つかったものを区切り記号としてファイル名判別。区切り記号が見つからなければインデックスの頭からファイル名と判別する。
+	LoadVarsのloadで2バイト文字が化ける。System.useCodepageをtrueにすると今度はコメントが受信できないため断念。
+
+
+★flvplayer_wrapper custom 2007/10/16_2版
+
+○「ログリストを縮める」を復活
+	・縮めても見にくくなるだけ、とかいってたけど無ければ無いでログリストが枠をはみ出してることに気づいた。
+	今回はON-OFFを即時適用するようにした。
+
+○動画ダウンロード時に新規ウィンドウを開かないように変更
+	・nico.o.urlを保持しておけば一定時間経過後もダウンロード可能なようなので、video_urlに入れておいた。
+	新規ウィンドウで開く理由も多分無くなったので変更。
+
+・flv_index.onDataにローカルファイルのファイル名をもう少し詳しく判別するためのコードを書いてみた。（今はまだコメントアウト）
+それに伴いローカルファイルのファイル名をlocal_file_nameとして各所に置き換えた。
+
+・timeLine.style.onEnterFrame内、main_bar._x = nico.header._x - 6に変更。それに伴いmain_bar.baseとmain_bar.icon_localの2px補正をやめた。
+
+・見栄えのために、レイアウトの移動をタイムライン(fit_layout)で監視してreplaceFunctionを待たずに実行するようにした。
+
+
+★flvplayer_wrapper custom 2007/10/16版
+
+○動画タイトルの取得(javascriptによる)は、wrapper読み込み時ではなく動画ダウンロード時に実行するように変更
+wrapper読み込み時にはjavascriptを実行しないようになったので、多分iroiroや市場生成のjsと衝突しなくなったはず
+	・wrapper読み込み時はJS_getTitleを実行しないように変更。
+	DLボタン初回押下時にvideo_title.length==0ならtimeLine.createEmptyMovieClip("copy_title",15)及びcopyTitleを実行するように変更。
+	copyTitleはvideo_title.length>0になるのを確認してからdownloadFLVする。5秒間video_title.length==0のままなら、動画タイトルをクリップボードにコピーするのを諦める。
+
+★flvplayer_wrapper custom 2007/10/15版
+
+○プレミアム会員が一般回線で視聴できない問題を多分修正
+	・loもflvplayerに渡すように変更。
+
+○いろいろ問題があるので「上を隠す」「縦を縮める」を廃止してレイアウト統一
+	・「上を隠す」をOFFにすると全画面時などに問題が。「縦を縮める」は今のところ見にくくなるだけなので廃止。
+
+○タグ及びマイリストの自動リンク検索(javascriptによる)は、wrapper読み込み時ではなくLINKボタン初回押下時に実行するように変更
+	・startJavaScriptはタグ及びマイリストの自動リンク検索のみ実行するように変更。
+	読み込み時はtimeLine.createEmptyMovieClip("start_js",11)及びstartJavaScriptを実行しないように変更。
+	html_source_checkedフラグを追加して、LINKボタン初回押下時にtimeLine.createEmptyMovieClip("start_js",11)及びstartJavaScriptを実行するように変更。
+	JS_getTitleだけは以前通り読み込み時に実行。JS_setFLVPlayerSizeは実行しないように変更。
+
+○ホイールシークがOFFのときはホイールでボリュームを増減するように変更（変化量はとりあえず５％、少なすぎるかも？）
+	・onMouseWheelのターゲット選別条件からmouse_wheelを外し、(target == nico.videowindow || target == screen)の処理に入ってから判定するように。
+	ボリューム増減処理はnico.player.setVolumeとnico.player.getVolumeで。変化量は5。
+
+○新規ウィンドウを開く処理を多少変更
+	・getURL(url, "_blank")する部分(downloadFLVとlink_thumb.base.onRelease)はjavascriptが許可されていればwindow.openを実行するように変更。
+	（一部のポップアップブロックを回避できるかも）
+
+・位置調節関係をreplaceFunction内に移動。なんで初めからここに書かなかったのか。
+
+
+★flvplayer_wrapper custom 2007/10/14版
+
+○設定からコメント保持数を制御できるようにした。0で無制限に保持する。
+	・「resMax_overwrite」キーを作ってnico.shiftMessages内の判定を変更。
+	flvplayerのソースをぱっと見た限り、多分問題なさそう？
+
+○マイメモリー再生がうまく認識できなかった問題を修正。
+マイメモリー再生時にローカルFLVサーバが使えない問題は未解決。
+	・変数ro、mmをflvplayerに渡すように変更。プレミアム会員専用の変数もあるかも？
+	・マイメモリー再生時はvにマイメモリーIDが入ってるのでsm○○形式の動画IDが得られない。
+	動画IDはnico.o.urlから取得可能だが、ローカルFLVサーバに確認する時点ではnico.o.urlにデータが入っていない。
+
+○カスタムフィルタの「今すぐ適用」ボタンが消えていた問題を修正
+	・「上を隠す」等の深度を1ずつずらした。よく確認してなかった・・・すみません。
+
+○ホイールシークの移動量を設定できるように変更
+	・"input_mouse"のラベル判定を無効にし、onChangedを追加。
+	ぱっと見た限り問題なさそうだったので設定可能にしたものの、何故ラベルにしてあったんだろう？
+
+
+○強調表示時のボタン類の位置がずれていたので修正
+	・2007/10/13版でheader、tabmenuの位置を少しずらしたために発生。
+	replaceFunction内にある位置調整を微調整。
+
+
+★flvplayer_wrapper custom 2007/10/13版
+
+○カスタムフィルタのnormalが効かなかった問題の修正
+	・RC2で指定なしコメントの各変数がundefinedになったので、normal時はfilterに"normal"を入れてupdateFilterに判定文を追加
+
+○カスタムフィルタのtypo修正とJavaScriptでのリサイズを修正、それに伴いフィルター１のサイズを510に修正
+	・カスタムフィルタはplace=allの判定でdが欠けていたtypoを修正
+	JS_setFLVPlayerSizeはflvplayer.style.heightの変更し忘れの修正、
+	flvplayer_container.style.heightが510px,540px,572px以外であればリサイズしないように変更、
+	見栄えのために「上を隠す」がONの場合は510pxにするように変更
+	それに伴いフィルター１のサイズを510に変更
+
+○「太いシークバー」が効かないのでとりあえずボタンを隠した
+	・シークバーの幅を変更する変数が見つからない・・・
+
+
+★flvplayer_wrapper custom 2007/10/12_2版
+
+○新規ログ取得時にフィルターや強調表示が正常に動作しない問題を多分修正
+	・RC2でコメント取得時にnico.shiftMessage（コメント限界数を超えたら古いコメントを破棄する）が実行されるようになったが、
+	カスタムフィルタ、NGIDフィルタ、fwMessages、強調表示がコメント破棄に対応していなかったので
+	nico.shiftMessagesを上書きして、コメント破棄と同時に上記のものを更新するように
+
+
+★flvplayer_wrapper custom 2007/10/12版
+
+○NGID追加時にスクリーン上のメッセージが消えない問題を修正
+	・RC2でnico.HideMessage及びnico.ShowMessageの引数が増えたので対応
+
+
+○画像をRC2仕様に更新、強調表示モードの画像も復帰
+それに伴いフィルタ－１のサイズを微妙に変更
+	・main_bar.png、tab.png、local.png(thanks!)を更新
+	
+	・main_bar.pngが右に2pxずれていたのを補正
+		main_bar.base._x -= 2;
+	
+	・tab.png、「→通常モードに戻す」ボタン、「NGIDに追加」ボタンの位置を微調整
+
+	・フィルター１のflvplayer_container及びflvplayerのサイズを572に変更
+
+○ローカル再生アイコンをエコノミーアイコンの上に移動
+	・そもそもなんで移動させてたんだよ！と言われそう。
+		3700行目辺り　if(local_file_found){内、表示位置の補正を無くす
+			main_bar.icon_local._x = Math.round(nico.header._x + nico.header.icon_narrow._x);
+			main_bar.icon_local._y = Math.round(nico.header._y + nico.header.icon_narrow._y + fwOffsetY);
+
+○ヘッダフィルタをbothに変更（bothでないと動かない人がいる模様）
+	・フィルター２及びフィルター３を(both)に変更
+
+
+★flvplayer_wrapper custom 2007/10/11_2版
+
+○「上を隠す」「縮める」の設定で微妙にサイズを調整できるように（再起動が必要）
+それに伴いフィルタ－１のサイズ変更
+（「強調表示モード」の画像表示はうまくいかないので保留）
+	・サイズを調整するフラグを二つ実装。
+	「hide_news」：fwOffsetYを利用してニュースを隠す
+	「clip_height」：hide_news==falseならfwOffsetY=0として上の空白を消し、hide_news==trueならログリストを縮めて下の空白を消す
+	どちらもfalseならfwOffsetY=30として全体が見えるように。
+	
+	・サイズ変更に応じて「→通常モードに戻す」ボタン、「NGIDに追加」ボタンの位置を調整。tab.pngの動かし方がわからなかったので画像を置き換えて保留。
+	
+	・フィルター１のflvplayer_container及びflvplayerのサイズを578に変更
+	
+	・JS_setFLVPlayerSizeを復帰してflvplayer_containerをリサイズ
+
+○マイリスト読込が出来なかった問題の修正
+	・マイリストのタイトルが<h1>、説明が<h3>にそれぞれ変更されたのでsearchHTMLsの引数を変更
+	
+	・title_ary及びinfo_aryのサーチがマイリストのタイトルに誤爆するので、動画リスト部分のみをsrcとして読むように変更
+
+○color=allが全コメントに効いていた問題の修正、ついでにplace=allとsize=allを実装
+	・RC2で指定なしコメントの_place,_font,_colorがundefinedになったので、updateFilter("check")の判定文を修正
+	placeとfontもcolorと同様の"all"が効くように判定文追加
+
+
+★flvplayer_wrapper custom 2007/10/11版
+
+細かい変更を何か忘れているかも・・・
+
+○RC2の仕様変更への対応
+	・iroiro等のjsからアクセスさせるためにドメイン変更
+		480行目辺り　http://res.nico.jp/を削除
+		及び、wrapper置き換えフィルタを変更
+	
+	・コントローラを引き伸ばして時間を見やすく（本当は逆に小さくしたい）
+		4250行目辺り　timeLine.getflv.onEnterFrame内、flvplayer読み込み完了後に以下を挿入
+			nico.header._y = nico.header._y + 30;
+			nico.tabmenu._y = nico.tabmenu._y + 30;
+			nico.tabmenu._height = nico.tabmenu._height - 30;
+			nico.controller._y = nico.controller._y - 3;
+			nico.controller._height = nico.controller._height + 3;
+			nico.controller._width = nico.controller._width + 4;
+			nico.inputArea._y = nico.inputArea._y - 3;
+	
+	・右上部を透過するようにmain_bar.pngを変更、RC2のflvplayerだと画像がなぜか右にずれる
+	
+	・ニュースが透けるのでsetAutoPlayInfo内のalphaを50から100に
+	
+	・ローカル再生アイコンの置き場に困ったのでとりあえず「編集中」にかぶせる
+		3700行目辺り　if(local_file_found){内、表示位置を（+68,+19）する
+			main_bar.icon_local._x = Math.round(nico.header._x + nico.header.icon_narrow._x + 68);
+			main_bar.icon_local._y = Math.round(nico.header._y + nico.header.icon_narrow._y + fwOffsetY + 19);
+	
+	・ログリストの「強調表示モード」等の位置調整
+	
+	・再生数、コメント数をずらさないように変更
+	
+	・nico.AddChatLogの引数変更
+	（nico.Connection.onCMsgChat内ではdpにLogListDPもしくはLogListDP_ownerthreadが入っているので他にもこれを入れた）
+	
+	・nico.Connection.onCMsgChatの関数変更に対応
+	
+	・ローカル再生用のnico.OpenPlayer上書きがうまくできないのでnico.o.onLoadを上書きするように変更
+
+	・nico.ClearLogが消滅、代わりにnico.ClearMessagesがあるが別機能なので同機能の関数をwrapper内で宣言
+
+	・nico.videowindow.videoをnico.videowindow.video_mcに変更
+
+	・nico.systemMessageArea.SystemMessage.textをnico.System_menu.systemMessageArea.SystemMessage.textに変更
+	
+	・flvplayer.swf呼び出し時にパラメータも渡すように変更
+
+○マイメモリーのコメント編集ができるように変更
+	・上記、flvplayer.swf呼び出し時にパラメータも渡すように変更でeを渡して対応
+
+○コメントクリック時の本文コピーを追加
+	・IDコピーを無効化
+		emphID(id)内の以下をコメントアウト
+		1100行目辺り
+			if(copy_to_clip_board){
+				System.setClipboard(name);
+				comment_message += "(C)";
+			}
+	
+	・本文コピー処理
+		1176行目辺り　searchID内のループでbreakの前に以下を挿入
+			if(copy_to_clip_board && copy_message_to_clip_board){System.setClipboard(result_id + ' ' + Slot[i]._text.text);}
+			else if(copy_to_clip_board){System.setClipboard(result_id);}
+			else if(copy_message_to_clip_board){System.setClipboard(Slot[i]._text.text);}
+	
+	・設定の表示を変更
+		1550行目辺り　"IDをクリップボードにコピー" を "IDをコピー" に変更
+		
+		"本文をコピー"の項目を各部に挿入（ほとんどはcopy_to_clip_boardの直後）
+			280行目辺り
+				var copy_message_to_clip_board = false;
+			360行目辺り
+				var copy_message_to_clip_board_so = SharedObject.getLocal("copy_message_to_clip_board");
+				if(copy_message_to_clip_board_so.data.flag != undefined){copy_message_to_clip_board = Boolean(copy_message_to_clip_board_so.data.flag);}
+			1700行目辺り
+				createToggleBtn(pref_menu,"copy_message_to_clip_board","本文をコピー",black12_fmt,18,120,117,0x808080);
+			1850行目辺り
+				if(copy_message_to_clip_board){
+					pref_menu.copy_message_to_clip_board.on._visible = true;
+				}else{
+					pref_menu.copy_message_to_clip_board.on._visible = false;
+				}
+		
+		設定ウィンドウの変更に伴い"<title>タグをいぢる"の位置を(200,117)に変更
+			1700行目辺り→createToggleBtn(pref_menu,"change_title","<title>タグをいぢる",black12_fmt,15,230,42,0x808080);
+
+○LINKボタンを押すまでリンクウィンドウを開かない
+	updateLinkThumb(mode,l_num,t_num)内の以下をコメントアウト
+		2110行目辺り　link_thumb._visible = true; 及び main_bar.link._visible = false; 
+	代わりに以下を挿入
+		if(!(link_thumb._visible|main_bar.link._visible)){main_bar.link._visible = true;}
+
+○ホイールシーク時、一時停止を解除しない
+	function(delta,target)内の以下をコメントアウト
+		3400行目辺り
+			var state = nico.player.__get__state();
+			if(state != "playing"){nico.player.play();}
+			setCheckPlayingInterval();
+
+○DLボタンを押したときvideo_titleをコピー＆ボタンの消失時間を少し短縮
+	・video_titleをコピー
+		3820行目辺り　downloadFLV()の最初に以下を挿入
+			System.setClipboard(video_title);
+	
+	・ボタンの消失時間短縮
+		同downloadFLV()内のsetDownLoadInterval(600);を300に変更

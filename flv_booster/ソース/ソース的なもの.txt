@@ -1,0 +1,99 @@
+// 以下はファイル構造とflaファイルのメインスクリプトです。
+//
+// wrapper
+//     ┣nico━videowindow━video_mc━video
+//     ┗flv_booster
+//               ┣contrast
+//               ┃     ┣value
+//               ┃     ┗base
+//               ┣brightness
+//               ┃     ┣value
+//               ┃     ┗base
+//               ┗sharp
+//                      ┣value
+//                      ┗base
+//
+
+
+import flash.geom.ColorTransform;
+import flash.geom.Transform;
+import flash.filters.ConvolutionFilter;
+import flash.filters.BlurFilter;
+// ターゲットムービークリップ
+//target_mc = _root.nico.videowindow.video_mc.video;
+// 親ムービークリップから target_mc を渡されて無い場合 _root をターゲットとする
+if (target_mc == undefined) {
+	target_mc = _root;
+}
+// 初期設定    
+contrast.flg = false;
+contrast.value = 0;
+brightness.flg = false;
+brightness.value = 0;
+sharp.flg = false;
+sharp.value = 0;
+max_value = 64;
+// マウスを監視するオブジェクトの作成
+var mouseListener = new Object();
+// ホイールを回転させた時の処理
+mouseListener.onMouseWheel = function(delta, target) {
+	// ホイールの回転速度を補正
+	delta /= Math.abs(delta);
+	// カーソル下のムービークリップを判別し value を増減させる
+	target = target._parent == contrast || target._parent == brightness || target._parent == sharp ? target._parent : target;
+	if (target == contrast || target == brightness || target == sharp) {
+		target.value += Math.abs(target.value+delta)<=max_value ? delta : 0;
+		color_update(target);
+	}
+};
+// ボタンを押した時の処理
+contrast.onRelease = brightness.onRelease=sharp.onRelease =function () {
+	if (trans) {
+		flg_check(this);
+	} else if (eval(target_mc)) {
+		// ターゲットが見つかった場合の初期化処理
+		target_mc = eval(target_mc);
+		trans = new Transform(target_mc);
+		flg_check(this);
+	}
+};
+// ボタンにカーソルを乗せた時の処理
+contrast.onRollOver = brightness.onRollOver=sharp.onRollOver=function () {
+	// マウスの監視開始
+	Mouse.addListener(mouseListener);
+	this.base._alpha = this.flg ? 30 : 60;
+};
+// ボタンからカーソルを離したときの処理
+contrast.onRollOut = contrast.onReleaseOutside=brightness.onRollOut=brightness.onReleaseOutside=sharp.onRollOut=sharp.onReleaseOutside=function () {
+	// マウスの監視終了
+	Mouse.removeListener(mouseListener);
+	this.base._alpha = this.flg ? 30 : 100;
+};
+// ボタンのオンオフ
+function flg_check(target) {
+	target.flg = !target.flg;
+	target.base._alpha = target.flg ? 30 : 100;
+	color_update(target);
+}
+// カラーの更新
+function color_update(target) {
+	if (target == sharp) {
+		var s = sharp.value;
+		if (!sharp.flg || s == 0) {
+			target_mc.filters = [];
+		} else if (s>0) {
+			s /= 4;
+			target_mc.filters = [new BlurFilter(s, s)];
+		} else if (s<0) {
+			s = Math.floor(-128/s);
+			target_mc.filters = [new ConvolutionFilter(3, 3, [-1, -1, -1, -1, s+8, -1, -1, -1], s+1)];
+		}
+	} else if (trans) {
+		var c = 1+contrast.value*contrast.flg*0.01;
+		var b = brightness.value*brightness.flg;
+		var color = new ColorTransform(c, c, c, 1, b, b, b, 0);
+		trans.colorTransform = color;
+	}
+}
+stop();
+
